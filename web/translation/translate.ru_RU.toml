@@ -225,9 +225,6 @@
 "requestHeader" = "Заголовок запроса"
 "responseHeader" = "Заголовок ответа"
 
-[pages.inbounds.stream.quic]
-"encryption" = "Шифрование"
-
 [pages.settings]
 "title" = "Настройки"
 "save" = "Сохранить"
@@ -268,7 +265,7 @@
 "telegramTokenDesc" = "Необходимо получить токен у менеджера ботов Telegram @botfather"
 "telegramProxy" = "Прокси Socks5"
 "telegramProxyDesc" = "Если для подключения к Telegram вам нужен прокси Socks5. Настройте его параметры согласно руководству."
-"telegramChatId" = "Telegram ID админа бота"
+"telegramChatId" = "Telegram ChatID админа бота"
 "telegramChatIdDesc" = "Множественные идентификаторы чата, разделенные запятыми. Чтобы получить свои идентификаторы чатов, используйте @userinfobot или команду '/id' в боте."
 "telegramNotifyTime" = "Частота уведомлений бота Telegram"
 "telegramNotifyTimeDesc" = "Используйте формат времени Crontab"
@@ -312,6 +309,8 @@
 "fragment" = "Фрагментация"
 "fragmentDesc" = "Включить фрагментацию для пакета приветствия TLS"
 "fragmentSett" = "Настройки фрагментации"
+"noiseDesc" = "Включить Noise."
+"noiseSett" = "Настройки Noise"
 "mux" = "Mux"
 "muxDesc" = "Передача нескольких независимых потоков данных в рамках установленного потока данных."
 "muxSett" = "Mux Настройки"
@@ -398,7 +397,7 @@
 "OpenAIWARP" = "OpenAI (ChatGPT)"
 "OpenAIWARPDesc" = "Направляет трафик в OpenAI (ChatGPT) через WARP."
 "NetflixWARP" = "Netflix"
-"NetflixWARPDesc" = "Направляет трафик в Apple через WARP."
+"NetflixWARPDesc" = "Направляет трафик в Netflix через WARP."
 "MetaWARP" = "Мета"
 "MetaWARPDesc" = "Направляет трафик в Meta (Instagram, Facebook, WhatsApp, Threads...) через WARP."
 "AppleWARP" = "Apple"
@@ -423,6 +422,10 @@
 "accessLogDesc" = "Путь к файлу журнала доступа. Специальное значение «none» отключило журналы доступа."
 "errorLog" = "Журнал ошибок"
 "errorLogDesc" = "Путь к файлу журнала ошибок. Специальное значение «none» отключает журналы ошибок."
+"dnsLog" = "DNS Журнал"
+"dnsLogDesc" = "Включить логи запросов DNS"
+"maskAddress" = "Маскировать Адрес"
+"maskAddressDesc" = "Маска IP-адреса, при активации автоматически заменяет IP-адрес, который появляется в логе."
 
 [pages.xray.rules]
 "first" = "Первый"
@@ -618,11 +621,13 @@
 "confirmNumberAdd" = "✅ Подтвердить добавление: {{ .Num }}"
 "limitTraffic" = "🚧 Лимит трафика"
 "getBanLogs" = "Логи блокировок"
+"allClients" = "Все клиенты"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Успешный!"
 "errorOperation" = "❗ Ошибка в операции."
 "getInboundsFailed" = "❌ Не удалось получить входящие потоки."
+"getClientsFailed" = "❌ Не удалось получить клиентов."
 "canceled" = "❌ {{ .Email }}: Операция отменена."
 "clientRefreshSuccess" = "✅ {{ .Email }}: Клиент успешно обновлен."
 "IpRefreshSuccess" = "✅ {{ .Email }}: IP-адреса успешно обновлены."
@@ -638,3 +643,5 @@
 "enableSuccess" = "✅ {{ .Email }}: Включено успешно."
 "disableSuccess" = "✅ {{ .Email }}: Отключено успешно."
 "askToAddUserId" = "Ваша конфигурация не найдена!\r\nПожалуйста, попросите администратора использовать ваш идентификатор пользователя Telegram в ваших конфигурациях.\r\n\r\nВаш идентификатор пользователя: <code>{{ .TgUserID }}</code>"
+"chooseClient" = "Выберите пользователя для подключения {{ .Inbound }}"
+"chooseInbound" = "Выберите подключение"

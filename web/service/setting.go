@@ -32,7 +32,7 @@ var defaultValueMap = map[string]string{
 	"webKeyFile":         "",
 	"secret":             random.Seq(32),
 	"webBasePath":        "/",
-	"sessionMaxAge":      "0",
+	"sessionMaxAge":      "60",
 	"pageSize":           "50",
 	"expireDiff":         "0",
 	"trafficDiff":        "0",
@@ -45,7 +45,7 @@ var defaultValueMap = map[string]string{
 	"tgRunTime":          "@daily",
 	"tgBotBackup":        "false",
 	"tgBotLoginNotify":   "true",
-	"tgCpu":              "0",
+	"tgCpu":              "80",
 	"tgLang":             "en-US",
 	"secretEnable":       "false",
 	"subEnable":          "false",
@@ -62,6 +62,7 @@ var defaultValueMap = map[string]string{
 	"subJsonPath":        "/json/",
 	"subJsonURI":         "",
 	"subJsonFragment":    "",
+	"subJsonNoise":       "",
 	"subJsonMux":         "",
 	"subJsonRules":       "",
 	"datepicker":         "gregorian",
@@ -456,6 +457,10 @@ func (s *SettingService) GetSubJsonURI() (string, error) {
 
 func (s *SettingService) GetSubJsonFragment() (string, error) {
 	return s.getString("subJsonFragment")
+}
+
+func (s *SettingService) GetSubJsonNoise() (string, error) {
+	return s.getString("subJsonNoise")
 }
 
 func (s *SettingService) GetSubJsonMux() (string, error) {

@@ -225,9 +225,6 @@
 "requestHeader" = "Заголовок запиту"
 "responseHeader" = "Заголовок відповіді"
 
-[pages.inbounds.stream.quic]
-"encryption" = "Шифрування"
-
 [pages.settings]
 "title" = "Параметри панелі"
 "save" = "Зберегти"
@@ -312,6 +309,8 @@
 "fragment" = "Фрагментація"
 "fragmentDesc" = "Увімкнути фрагментацію для пакету привітання TLS"
 "fragmentSett" = "Параметри фрагментації"
+"noiseDesc" = "Увімкнути Noise."
+"noiseSett" = "Налаштування Noise"
 "mux" = "Mux"
 "muxDesc" = "Передавати кілька незалежних потоків даних у межах встановленого потоку даних."
 "muxSett" = "Налаштування Mux"
@@ -423,6 +422,10 @@
 "accessLogDesc" = "Шлях до файлу журналу доступу. Спеціальне значення 'none' вимикає журнали доступу"
 "errorLog" = "Журнал помилок"
 "errorLogDesc" = "Шлях до файлу журналу помилок. Спеціальне значення 'none' вимикає журнали помилок"
+"dnsLog" = "Журнал DNS"
+"dnsLogDesc" = "Чи включити журнали запитів DNS"
+"maskAddress" = "Маскувати Адресу"
+"maskAddressDesc" = "Маска IP-адреси, при активації автоматично замінює IP-адресу, яка з'являється у журналі."
 
 [pages.xray.rules]
 "first" = "Перший"
@@ -618,11 +621,13 @@
 "confirmNumberAdd" = "✅ Підтвердити додавання: {{ .Num }}"
 "limitTraffic" = "🚧 Ліміт трафіку"
 "getBanLogs" = "Отримати журнали заборон"
+"allClients" = "Всі Клієнти"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Операція успішна!"
 "errorOperation" = "❗ Помилка в роботі."
 "getInboundsFailed" = "❌ Не вдалося отримати вхідні повідомлення."
+"getClientsFailed" = "❌ Не вдалося отримати клієнтів."
 "canceled" = "❌ {{ .Email }}: Операцію скасовано."
 "clientRefreshSuccess" = "✅ {{ .Email }}: Клієнт успішно оновлено."
 "IpRefreshSuccess" = "✅ {{ .Email }}: IP-адреси успішно оновлено."
@@ -638,3 +643,5 @@
 "enableSuccess" = "✅ {{ .Email }}: Увімкнути успішно."
 "disableSuccess" = "✅ {{ .Email }}: Успішно вимкнено."
 "askToAddUserId" = "Вашу конфігурацію не знайдено!\r\nБудь ласка, попросіть свого адміністратора використовувати ваш ідентифікатор Telegram у вашій конфігурації.\r\n\r\nВаш ідентифікатор користувача: <code>{{ .TgUserID }}</code>"
+"chooseClient" = "Виберіть клієнта для Вхідного {{ .Inbound }}"
+"chooseInbound" = "Виберіть Вхідний"

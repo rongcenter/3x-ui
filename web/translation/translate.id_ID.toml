@@ -225,9 +225,6 @@
 "requestHeader" = "Header Permintaan"
 "responseHeader" = "Header Respons"
 
-[pages.inbounds.stream.quic]
-"encryption" = "Enkripsi"
-
 [pages.settings]
 "title" = "Pengaturan Panel"
 "save" = "Simpan"
@@ -312,6 +309,8 @@
 "fragment" = "Fragmentasi"
 "fragmentDesc" = "Aktifkan fragmentasi untuk paket hello TLS"
 "fragmentSett" = "Pengaturan Fragmentasi"
+"noiseDesc" = "Aktifkan Noise."
+"noiseSett" = "Pengaturan Noise"
 "mux" = "Mux"
 "muxDesc" = "Mengirimkan beberapa aliran data independen dalam aliran data yang sudah ada."
 "muxSett" = "Pengaturan Mux"
@@ -423,6 +422,10 @@
 "accessLogDesc" = "Jalur file untuk log akses. Nilai khusus 'tidak ada' menonaktifkan log akses"
 "errorLog" = "Catatan eror"
 "errorLogDesc" = "Jalur file untuk log kesalahan. Nilai khusus 'tidak ada' menonaktifkan log kesalahan"
+"dnsLog" = "Log DNS"
+"dnsLogDesc" = "Apakah akan mengaktifkan log kueri DNS"
+"maskAddress" = "Alamat Masker"
+"maskAddressDesc" = "Masker alamat IP, ketika diaktifkan, akan secara otomatis mengganti alamat IP yang muncul di log."
 
 [pages.xray.rules]
 "first" = "Pertama"
@@ -618,11 +621,13 @@
 "confirmNumberAdd" = "✅ Konfirmasi menambahkan: {{ .Num }}"
 "limitTraffic" = "🚧 Batas Lalu Lintas"
 "getBanLogs" = "Dapatkan Log Pemblokiran"
+"allClients" = "Semua Klien"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Operasi berhasil!"
 "errorOperation" = "❗ Kesalahan dalam operasi."
 "getInboundsFailed" = "❌ Gagal mendapatkan inbounds."
+"getClientsFailed" = "❌ Gagal mendapatkan klien."
 "canceled" = "❌ {{ .Email }}: Operasi dibatalkan."
 "clientRefreshSuccess" = "✅ {{ .Email }}: Klien diperbarui dengan berhasil."
 "IpRefreshSuccess" = "✅ {{ .Email }}: IP diperbarui dengan berhasil."
@@ -637,4 +642,6 @@
 "removedTGUserSuccess" = "✅ {{ .Email }}: Pengguna Telegram dihapus dengan berhasil."
 "enableSuccess" = "✅ {{ .Email }}: Diaktifkan dengan berhasil."
 "disableSuccess" = "✅ {{ .Email }}: Dinonaktifkan dengan berhasil."
-"askToAddUserId" = "Konfigurasi Anda tidak ditemukan!\r\nSilakan minta admin Anda untuk menggunakan ID Telegram Anda dalam konfigurasi Anda.\r\n\r\nID Pengguna Anda: <code>{{ .TgUserID }}</code>"
+"askToAddUserId" = "Konfigurasi Anda tidak ditemukan!\r\nSilakan minta admin Anda untuk menggunakan ChatID Telegram Anda dalam konfigurasi Anda.\r\n\r\nChatID Pengguna Anda: <code>{{ .TgUserID }}</code>"
+"chooseClient" = "Pilih Klien untuk Inbound {{ .Inbound }}"
+"chooseInbound" = "Pilih Inbound"

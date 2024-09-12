@@ -225,9 +225,6 @@
 "requestHeader" = "Request Header"
 "responseHeader" = "Response Header"
 
-[pages.inbounds.stream.quic]
-"encryption" = "Encryption"
-
 [pages.settings]
 "title" = "Panel Settings"
 "save" = "Save"
@@ -312,6 +309,8 @@
 "fragment" = "Fragmentation"
 "fragmentDesc" = "Enable fragmentation for TLS hello packet."
 "fragmentSett" = "Fragmentation Settings"
+"noiseDesc" = "Enable Noise."
+"noiseSett" = "Noise Settings"
 "mux" = "Mux"
 "muxDesc" = "Transmit multiple independent data streams within an established data stream."
 "muxSett" = "Mux Settings"
@@ -423,6 +422,10 @@
 "accessLogDesc" = "The file path for the access log. The special value 'none' disabled access logs"
 "errorLog" = "Error Log"
 "errorLogDesc" = "The file path for the error log. The special value 'none' disabled error logs"
+"dnsLog" = "DNS Log"
+"dnsLogDesc" = "Whether to enable DNS query logs"
+"maskAddress" = "Mask Address"
+"maskAddressDesc" = "IP address mask, when enabled, will automatically replace the IP address that appears in the log."
 
 [pages.xray.rules]
 "first" = "First"
@@ -618,11 +621,13 @@
 "confirmNumberAdd" = "✅ Confirm adding: {{ .Num }}"
 "limitTraffic" = "🚧 Traffic Limit"
 "getBanLogs" = "Get Ban Logs"
+"allClients" = "All Clients"
 
 [tgbot.answers]
 "successfulOperation" = "✅ Operation successful!"
 "errorOperation" = "❗ Error in operation."
 "getInboundsFailed" = "❌ Failed to get inbounds."
+"getClientsFailed" = "❌ Failed to get clients."
 "canceled" = "❌ {{ .Email }}: Operation canceled."
 "clientRefreshSuccess" = "✅ {{ .Email }}: Client refreshed successfully."
 "IpRefreshSuccess" = "✅ {{ .Email }}: IPs refreshed successfully."
@@ -637,4 +642,6 @@
 "removedTGUserSuccess" = "✅ {{ .Email }}: Telegram User removed successfully."
 "enableSuccess" = "✅ {{ .Email }}: Enabled successfully."
 "disableSuccess" = "✅ {{ .Email }}: Disabled successfully."
-"askToAddUserId" = "Your configuration is not found!\r\nPlease ask your admin to use your Telegram ID in your configuration(s).\r\n\r\nYour User ID: <code>{{ .TgUserID }}</code>"
+"askToAddUserId" = "Your configuration is not found!\r\nPlease ask your admin to use your Telegram ChatID in your configuration(s).\r\n\r\nYour ChatID: <code>{{ .TgUserID }}</code>"
+"chooseClient" = "Choose a Client for Inbound {{ .Inbound }}"
+"chooseInbound" = "Choose an Inbound"

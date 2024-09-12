@@ -225,9 +225,6 @@
 "requestHeader" = "请求头"
 "responseHeader" = "响应头"
 
-[pages.inbounds.stream.quic]
-"encryption" = "加密"
-
 [pages.settings]
 "title" = "面板设置"
 "save" = "保存"
@@ -312,6 +309,8 @@
 "fragment" = "分片"
 "fragmentDesc" = "启用 TLS hello 数据包分片"
 "fragmentSett" = "设置"
+"noiseDesc" = "启用 Noise."
+"noiseSett" = "Noise 设置"
 "mux" = "多路复用器"
 "muxDesc" = "在已建立的数据流内传输多个独立的数据流"
 "muxSett" = "复用器设置"
@@ -423,6 +422,10 @@
 "accessLogDesc" = "访问日志的文件路径。特殊值 'none' 禁用访问日志"
 "errorLog" = "错误日志"
 "errorLogDesc" = "错误日志的文件路径。特殊值 'none' 禁用错误日志"
+"dnsLog" = "DNS 日志"
+"dnsLogDesc" = "是否启用 DNS 查询日志"
+"maskAddress" = "隐藏地址"
+"maskAddressDesc" = "IP 地址掩码，启用时会自动替换日志中出现的 IP 地址。"
 
 [pages.xray.rules]
 "first" = "置顶"
@@ -618,11 +621,13 @@
 "confirmNumberAdd" = "✅ 确认添加：{{ .Num }}"
 "limitTraffic" = "🚧 流量限制"
 "getBanLogs" = "禁止日志"
+"allClients" = "所有客户"
 
 [tgbot.answers]
 "successfulOperation" = "✅ 成功！"
 "errorOperation" = "❗ 操作错误。"
 "getInboundsFailed" = "❌ 获取入站信息失败。"
+"getClientsFailed" = "❌ 获取客户失败。"
 "canceled" = "❌ {{ .Email }}：操作已取消。"
 "clientRefreshSuccess" = "✅ {{ .Email }}：客户端刷新成功。"
 "IpRefreshSuccess" = "✅ {{ .Email }}：IP 刷新成功。"
@@ -637,4 +642,6 @@
 "removedTGUserSuccess" = "✅ {{ .Email }}：Telegram 用户已成功移除。"
 "enableSuccess" = "✅ {{ .Email }}：已成功启用。"
 "disableSuccess" = "✅ {{ .Email }}：已成功禁用。"
-"askToAddUserId" = "未找到您的配置！\r\n请向管理员询问，在您的配置中使用您的 Telegram 用户 ID。\r\n\r\n您的用户 ID：<code>{{ .TgUserID }}</code>"
+"askToAddUserId" = "未找到您的配置！\r\n请向管理员询问，在您的配置中使用您的 Telegram 用户 ChatID。\r\n\r\n您的用户 ChatID：<code>{{ .TgUserID }}</code>"
+"chooseClient" = "为入站 {{ .Inbound }} 选择一个客户"
+"chooseInbound" = "选择一个入站"

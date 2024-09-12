@@ -225,9 +225,6 @@
 "requestHeader" = "İstek Başlığı"
 "responseHeader" = "Yanıt Başlığı"
 
-[pages.inbounds.stream.quic]
-"encryption" = "Şifreleme"
-
 [pages.settings]
 "title" = "Panel Ayarları"
 "save" = "Kaydet"
@@ -312,6 +309,8 @@
 "fragment" = "Parçalama"
 "fragmentDesc" = "TLS merhaba paketinin parçalanmasını etkinleştir."
 "fragmentSett" = "Parçalama Ayarları"
+"noiseDesc" = "Noise'i Etkinleştir."
+"noiseSett" = "Noise Ayarları"
 "mux" = "Mux"
 "muxDesc" = "Kurulmuş bir veri akışında birden çok bağımsız veri akışını iletir."
 "muxSett" = "Mux Ayarları"
@@ -423,6 +422,10 @@
 "accessLogDesc" = "Erişim günlüğü için dosya yolu. 'none' özel değeri erişim günlüklerini devre dışı bırakır"
 "errorLog" = "Hata Günlüğü"
 "errorLogDesc" = "Hata günlüğü için dosya yolu. 'none' özel değeri hata günlüklerini devre dışı bırakır"
+"dnsLog" = "DNS Günlüğü"
+"dnsLogDesc" = "DNS sorgu günlüklerini etkinleştirin"
+"maskAddress" = "Adres Maskesi"
+"maskAddressDesc" = "IP adresi maskesi, etkinleştirildiğinde, günlükte görünen IP adresini otomatik olarak değiştirecektir."
 
 [pages.xray.rules]
 "first" = "İlk"
@@ -618,11 +621,13 @@
 "confirmNumberAdd" = "✅ Ekleme onayı: {{ .Num }}"
 "limitTraffic" = "🚧 Trafik Sınırı"
 "getBanLogs" = "Yasak Günlüklerini Al"
+"allClients" = "Tüm Müşteriler"
 
 [tgbot.answers]
 "successfulOperation" = "✅ İşlem başarılı!"
 "errorOperation" = "❗ İşlemde hata."
 "getInboundsFailed" = "❌ Gelenler alınamadı."
+"getClientsFailed" = "❌ Müşteriler alınamadı."
 "canceled" = "❌ {{ .Email }}: İşlem iptal edildi."
 "clientRefreshSuccess" = "✅ {{ .Email }}: Müşteri başarıyla yenilendi."
 "IpRefreshSuccess" = "✅ {{ .Email }}: IP'ler başarıyla yenilendi."
@@ -637,4 +642,6 @@
 "removedTGUserSuccess" = "✅ {{ .Email }}: Telegram Kullanıcısı başarıyla kaldırıldı."
 "enableSuccess" = "✅ {{ .Email }}: Başarıyla etkinleştirildi."
 "disableSuccess" = "✅ {{ .Email }}: Başarıyla devre dışı bırakıldı."
-"askToAddUserId" = "Yapılandırmanız bulunamadı!\r\nLütfen yöneticinizden yapılandırmalarınıza Telegram ID'nizi eklemesini isteyin.\r\n\r\nKullanıcı ID'niz: <code>{{ .TgUserID }}</code>"
+"askToAddUserId" = "Yapılandırmanız bulunamadı!\r\nLütfen yöneticinizden yapılandırmalarınıza Telegram ChatID'nizi eklemesini isteyin.\r\n\r\nKullanıcı ChatID'niz: <code>{{ .TgUserID }}</code>"
+"chooseClient" = "Gelen {{ .Inbound }} için bir Müşteri Seçin"
+"chooseInbound" = "Bir Gelen Seçin"

@@ -225,9 +225,6 @@
 "requestHeader" = "سربرگ درخواست"
 "responseHeader" = "سربرگ پاسخ"
 
-[pages.inbounds.stream.quic]
-"encryption" = "رمزنگاری"
-
 [pages.settings]
 "title" = "تنظیمات پنل"
 "save" = "ذخیره"
@@ -312,6 +309,8 @@
 "fragment" = "فرگمنت"
 "fragmentDesc" = "فعال کردن فرگمنت برای بسته‌ی نخست تی‌ال‌اس"
 "fragmentSett" = "تنظیمات فرگمنت"
+"noiseDesc" = "فعال کردن Noise."
+"noiseSett" = "تنظیمات Noise"
 "mux" = "ماکس"
 "muxDesc" = "چندین جریان داده مستقل را در یک جریان داده ثابت منتقل می کند"
 "muxSett" = "تنظیمات ماکس"
@@ -423,6 +422,10 @@
 "accessLogDesc" = "مسیر فایل برای گزارش دسترسی. مقدار ویژه «هیچ» گزارش‌های دسترسی را غیرفعال میکند."
 "errorLog" = "گزارش خطا"
 "errorLogDesc" = "مسیر فایل برای ورود به سیستم خطا. مقدار ویژه «هیچ» گزارش های خطا را غیرفعال میکند"
+"dnsLog" = "گزارش DNS"
+"dnsLogDesc" = "آیا ثبت‌های درخواست DNS را فعال کنید"
+"maskAddress" = "پنهان کردن آدرس"
+"maskAddressDesc" = "پوشش آدرس IP، هنگامی که فعال می‌شود، به طور خودکار آدرس IP که در لاگ ظاهر می‌شود را جایگزین می‌کند."
 
 [pages.xray.rules]
 "first" = "اولین"
@@ -517,10 +520,10 @@
 "unlimited" = "♾ - نامحدود(ریست)"
 "add" = "اضافه کردن"
 "month" = "ماه"
-"months" = "ماه‌ها"
+"months" = "ماه‌"
 "day" = "روز"
-"days" = "روزها"
-"hours" = "ساعت‌ها"
+"days" = "روز"
+"hours" = "ساعت‌"
 "unknown" = "نامشخص"
 "inbounds" = "ورودی‌ها"
 "clients" = "کلاینت‌ها"
@@ -567,7 +570,7 @@
 "inbound" = "📍 نام‌ورودی: {{ .Remark }}\r\n"
 "port" = "🔌 پورت: {{ .Port }}\r\n"
 "expire" = "📅 تاریخ‌انقضا: {{ .Time }}\r\n\r\n"
-"expireIn" = "📅 باقی‌مانده‌تاانقضا: {{ .Time }}\r\n\r\n"
+"expireIn" = "📅 باقی‌ مانده‌ تا انقضا: {{ .Time }}\r\n\r\n"
 "active" = "💡 فعال: {{ .Enable }}\r\n"
 "enabled" = "🚨 وضعیت: {{ .Enable }}\r\n"
 "online" = "🌐 وضعیت اتصال: {{ .Status }}\r\n"
@@ -618,11 +621,13 @@
 "confirmNumberAdd" = "✅ تایید اضافه کردن: {{ .Num }}"
 "limitTraffic" = "🚧 محدودیت ترافیک"
 "getBanLogs" = "گزارش های بلوک را دریافت کنید"
+"allClients" = "همه مشتریان"
 
 [tgbot.answers]
 "successfulOperation" = "✅ انجام شد!"
 "errorOperation" = "❗ خطا در عملیات."
 "getInboundsFailed" = "❌ دریافت ورودی‌ها با خطا مواجه شد."
+"getClientsFailed" = "❌ دریافت مشتریان با شکست مواجه شد."
 "canceled" = "❌ {{ .Email }} : عملیات لغو شد."
 "clientRefreshSuccess" = "✅ {{ .Email }} : کلاینت با موفقیت تازه‌سازی شد."
 "IpRefreshSuccess" = "✅ {{ .Email }} : آدرس‌ها با موفقیت تازه‌سازی شدند."
@@ -638,3 +643,5 @@
 "enableSuccess" = "✅ {{ .Email }} : با موفقیت فعال شد."
 "disableSuccess" = "✅ {{ .Email }} : با موفقیت غیرفعال شد."
 "askToAddUserId" = "پیکربندی شما یافت نشد!\r\nلطفاً از مدیر خود بخواهید که شناسه کاربر تلگرام خود را در پیکربندی (های) خود استفاده کند.\r\n\r\nشناسه کاربری شما: <code>{{ .TgUserID }}</code>"
+"chooseClient" = "یک مشتری برای ورودی {{ .Inbound }} انتخاب کنید"
+"chooseInbound" = "یک ورودی انتخاب کنید"
