@@ -41,6 +41,7 @@ var defaultValueMap = map[string]string{
 	"tgBotEnable":        "false",
 	"tgBotToken":         "",
 	"tgBotProxy":         "",
+	"tgBotAPIServer":     "",
 	"tgBotChatId":        "",
 	"tgRunTime":          "@daily",
 	"tgBotBackup":        "false",
@@ -62,7 +63,7 @@ var defaultValueMap = map[string]string{
 	"subJsonPath":        "/json/",
 	"subJsonURI":         "",
 	"subJsonFragment":    "",
-	"subJsonNoise":       "",
+	"subJsonNoises":      "",
 	"subJsonMux":         "",
 	"subJsonRules":       "",
 	"datepicker":         "gregorian",
@@ -242,6 +243,10 @@ func (s *SettingService) GetListen() (string, error) {
 	return s.getString("webListen")
 }
 
+func (s *SettingService) SetListen(ip string) error {
+	return s.setString("webListen", ip)
+}
+
 func (s *SettingService) GetWebDomain() (string, error) {
 	return s.getString("webDomain")
 }
@@ -260,6 +265,14 @@ func (s *SettingService) GetTgBotProxy() (string, error) {
 
 func (s *SettingService) SetTgBotProxy(token string) error {
 	return s.setString("tgBotProxy", token)
+}
+
+func (s *SettingService) GetTgBotAPIServer() (string, error) {
+	return s.getString("tgBotAPIServer")
+}
+
+func (s *SettingService) SetTgBotAPIServer(token string) error {
+	return s.setString("tgBotAPIServer", token)
 }
 
 func (s *SettingService) GetTgBotChatId() (string, error) {
@@ -459,8 +472,8 @@ func (s *SettingService) GetSubJsonFragment() (string, error) {
 	return s.getString("subJsonFragment")
 }
 
-func (s *SettingService) GetSubJsonNoise() (string, error) {
-	return s.getString("subJsonNoise")
+func (s *SettingService) GetSubJsonNoises() (string, error) {
+	return s.getString("subJsonNoises")
 }
 
 func (s *SettingService) GetSubJsonMux() (string, error) {

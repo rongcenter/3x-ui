@@ -2,9 +2,7 @@ package service
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -101,8 +99,9 @@ func (s *InboundService) getAllEmails() ([]string, error) {
 }
 
 func (s *InboundService) contains(slice []string, str string) bool {
+	lowerStr := strings.ToLower(str)
 	for _, s := range slice {
-		if s == str {
+		if strings.ToLower(s) == lowerStr {
 			return true
 		}
 	}
@@ -331,6 +330,7 @@ func (s *InboundService) UpdateInbound(inbound *model.Inbound) (*model.Inbound, 
 	oldInbound.Settings = inbound.Settings
 	oldInbound.StreamSettings = inbound.StreamSettings
 	oldInbound.Sniffing = inbound.Sniffing
+	oldInbound.Allocate = inbound.Allocate
 	if inbound.Listen == "" || inbound.Listen == "0.0.0.0" || inbound.Listen == "::" || inbound.Listen == "::0" {
 		oldInbound.Tag = fmt.Sprintf("inbound-%v", inbound.Port)
 	} else {
@@ -410,12 +410,6 @@ func (s *InboundService) updateClientTraffics(tx *gorm.DB, oldInbound *model.Inb
 func (s *InboundService) AddInboundClient(data *model.Inbound) (bool, error) {
 	clients, err := s.GetClients(data)
 	if err != nil {
-		return false, err
-	}
-
-	email := clients[0].Email
-	valid, err := validateEmail(email)
-	if !valid {
 		return false, err
 	}
 
@@ -594,8 +588,12 @@ func (s *InboundService) DelInboundClient(inboundId int, clientId string) (bool,
 				logger.Debug("Client deleted by api:", email)
 				needRestart = false
 			} else {
-				logger.Debug("Unable to del client by api:", err1)
-				needRestart = true
+				if strings.Contains(err1.Error(), fmt.Sprintf("User %s not found.", email)) {
+					logger.Debug("User is already deleted. Nothing to do more...")
+				} else {
+					logger.Debug("Error in deleting client by api:", err1)
+					needRestart = true
+				}
 			}
 			s.xrayApi.Close()
 		}
@@ -606,12 +604,6 @@ func (s *InboundService) DelInboundClient(inboundId int, clientId string) (bool,
 func (s *InboundService) UpdateInboundClient(data *model.Inbound, clientId string) (bool, error) {
 	clients, err := s.GetClients(data)
 	if err != nil {
-		return false, err
-	}
-
-	email := clients[0].Email
-	valid, err := validateEmail(email)
-	if !valid {
 		return false, err
 	}
 
@@ -725,10 +717,14 @@ func (s *InboundService) UpdateInboundClient(data *model.Inbound, clientId strin
 		if oldClients[clientIndex].Enable {
 			err1 := s.xrayApi.RemoveUser(oldInbound.Tag, oldEmail)
 			if err1 == nil {
-				logger.Debug("Old client deleted by api:", clients[0].Email)
+				logger.Debug("Old client deleted by api:", oldEmail)
 			} else {
-				logger.Debug("Error in deleting client by api:", err1)
-				needRestart = true
+				if strings.Contains(err1.Error(), fmt.Sprintf("User %s not found.", oldEmail)) {
+					logger.Debug("User is already deleted. Nothing to do more...")
+				} else {
+					logger.Debug("Error in deleting client by api:", err1)
+					needRestart = true
+				}
 			}
 		}
 		if clients[0].Enable {
@@ -1088,8 +1084,16 @@ func (s *InboundService) disableInvalidClients(tx *gorm.DB) (bool, int64, error)
 			if err1 == nil {
 				logger.Debug("Client disabled by api:", result.Email)
 			} else {
-				logger.Debug("Error in disabling client by api:", err1)
-				needRestart = true
+				if strings.Contains(err1.Error(), fmt.Sprintf("User %s not found.", result.Email)) {
+					logger.Debug("User is already disabled. Nothing to do more...")
+				} else {
+					if strings.Contains(err1.Error(), fmt.Sprintf("User %s not found.", result.Email)) {
+						logger.Debug("User is already disabled. Nothing to do more...")
+					} else {
+						logger.Debug("Error in disabling client by api:", err1)
+						needRestart = true
+					}
+				}
 			}
 		}
 		s.xrayApi.Close()
@@ -1574,7 +1578,7 @@ func (s *InboundService) ResetClientTraffic(id int, clientEmail string) (bool, e
 			return false, err
 		}
 		for _, client := range clients {
-			if client.Email == clientEmail {
+			if client.Email == clientEmail && client.Enable {
 				s.xrayApi.Init(p.GetAPIPort())
 				cipher := ""
 				if string(inbound.Protocol) == "shadowsocks" {
@@ -2020,21 +2024,4 @@ func (s *InboundService) MigrateDB() {
 
 func (s *InboundService) GetOnlineClients() []string {
 	return p.GetOnlineClients()
-}
-
-func validateEmail(email string) (bool, error) {
-	if strings.Contains(email, " ") {
-		return false, errors.New("email contains spaces, please remove them")
-	}
-
-	if email != strings.ToLower(email) {
-		return false, errors.New("email contains uppercase letters, please convert to lowercase")
-	}
-
-	emailPattern := `^[a-z0-9@._-]+$`
-	if !regexp.MustCompile(emailPattern).MatchString(email) {
-		return false, errors.New("email contains invalid characters, please use only lowercase letters, digits, and @._-")
-	}
-
-	return true, nil
 }

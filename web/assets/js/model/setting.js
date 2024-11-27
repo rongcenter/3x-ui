@@ -16,6 +16,7 @@ class AllSetting {
         this.tgBotEnable = false;
         this.tgBotToken = "";
         this.tgBotProxy = "";
+        this.tgBotAPIServer = "";
         this.tgBotChatId = "";
         this.tgRunTime = "@daily";
         this.tgBotBackup = false;
@@ -38,7 +39,7 @@ class AllSetting {
         this.subURI = "";
         this.subJsonURI = "";
         this.subJsonFragment = "";
-        this.subJsonNoise = "";
+        this.subJsonNoises = "";
         this.subJsonMux = "";
         this.subJsonRules = "";
 

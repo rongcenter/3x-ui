@@ -1,6 +1,11 @@
 [English](/README.md) | [中文](/README.zh_CN.md) | [Español](/README.es_ES.md) | [Русский](/README.ru_RU.md)
 
-<p align="center"><a href="#"><img src="./media/3X-UI.png" alt="Image"></a></p>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./media/3x-ui-dark.png">
+    <img alt="3x-ui" src="./media/3x-ui-light.png">
+  </picture>
+</p>
 
 **Un Panel Web Avanzado • Construido sobre Xray Core**
 
@@ -30,38 +35,62 @@
 bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh)
 ```
 
-## Instalar una Versión Personalizada
+## Instalar versión antigua (no recomendamos)
 
-Para instalar la versión deseada, agrega la versión al final del comando de instalación. Por ejemplo, ver `v2.4.0`:
+Para instalar la versión deseada, utiliza el siguiente comando de instalación. Por ejemplo, ver `v1.7.9`:
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/mhsanaei/3x-ui/master/install.sh) v2.4.0
+VERSION=v1.7.9 && <(curl -Ls "https://raw.githubusercontent.com/mhsanaei/3x-ui/$VERSION/install.sh") $VERSION
 ```
 
 ## Certificado SSL
 
 <details>
-  <summary>Haz clic para el Certificado SSL</summary>
+  <summary>Haga clic para ver los detalles del certificado SSL</summary>
 
-### Cloudflare
+### ACME
 
-El script de gestión tiene una aplicación de certificado SSL incorporada para Cloudflare. Para usar este script para colocar un certificado, necesitas lo siguiente:
+Para gestionar certificados SSL utilizando ACME:
 
-- Correo electrónico registrado en Cloudflare
-- Clave Global de API de Cloudflare
-- El nombre de dominio se ha resuelto en el servidor actual a través de Cloudflare
+1. Asegúrate de que tu dominio esté correctamente resuelto al servidor.
+2. Ejecuta el comando `x-ui` en la terminal y elige `Gestión de Certificados SSL`.
+3. Se te presentarán las siguientes opciones:
 
-**1:** Ejecuta el comando`x-ui`en la terminal, luego elige `Certificado SSL de Cloudflare`.
-
+   - **Get SSL:** Obtener certificados SSL.
+   - **Revoke:** Revocar certificados SSL existentes.
+   - **Force Renew:** Forzar la renovación de certificados SSL.
+   - **Show Existing Domains:** Mostrar todos los certificados de dominio disponibles en el servidor.  
+   - **Set Certificate Paths for the Panel:** Especificar el certificado para tu dominio que será utilizado por el panel. 
 
 ### Certbot
-```
+
+Para instalar y usar Certbot:
+
+```sh
 apt-get install certbot -y
 certbot certonly --standalone --agree-tos --register-unsafely-without-email -d yourdomain.com
 certbot renew --dry-run
 ```
 
-***Consejo:*** *Certbot también está integrado en el script de gestión. Puedes ejecutar el comando `x-ui` , luego elegir `Gestión de Certificados SSL`.*
+### Cloudflare
+
+El script de gestión incluye una aplicación de certificado SSL integrada para Cloudflare. Para usar este script para solicitar un certificado, necesitas lo siguiente:
+
+- Correo electrónico registrado en Cloudflare
+- Clave API Global de Cloudflare
+- El nombre de dominio debe estar resuelto al servidor actual a través de Cloudflare
+
+**Cómo obtener la Clave API Global de Cloudflare:**
+
+1. Ejecuta el comando `x-ui` en la terminal y elige `Certificado SSL de Cloudflare`.
+2. Visita el enlace: [Tokens de API de Cloudflare](https://dash.cloudflare.com/profile/api-tokens).
+3. Haz clic en "Ver Clave API Global" (consulta la captura de pantalla a continuación):
+   ![](media/APIKey1.PNG)
+4. Es posible que necesites volver a autenticar tu cuenta. Después de eso, se mostrará la Clave API (consulta la captura de pantalla a continuación):
+   ![](media/APIKey2.png)
+
+Al utilizarlo, simplemente ingresa tu `nombre de dominio`, `correo electrónico` y `CLAVE API`. El diagrama es el siguiente:
+   ![](media/DetailEnter.png)
 
 </details>
 
@@ -218,13 +247,18 @@ location /sub {
 - Ubuntu 20.04+
 - Debian 11+
 - CentOS 8+
+- OpenEuler 22.03+
 - Fedora 36+
 - Arch Linux
+- Parch Linux
 - Manjaro
 - Armbian
-- AlmaLinux 9+
-- Rockylinux 9+
+- AlmaLinux 8.0+
+- Rocky Linux 8+
+- Oracle Linux 8+
 - OpenSUSE Tubleweed
+- Amazon Linux 2023
+- Windows x64
 
 ## Arquitecturas y Dispositivos Compatibles
 
@@ -248,14 +282,18 @@ Nuestra plataforma ofrece compatibilidad con una amplia gama de arquitecturas y 
 
 ## Idiomas
 
-- Inglés
-- Farsi
-- Chino
-- Ruso
-- Vietnamita
-- Español
-- Indonesio
-- Ucraniano
+- English (inglés)  
+- Persian (persa)  
+- Traditional Chinese (chino tradicional)  
+- Simplified Chinese (chino simplificado)  
+- Japanese (japonés)  
+- Russian (ruso)  
+- Vietnamese (vietnamita)  
+- Spanish (español)  
+- Indonesian (indonesio)  
+- Ukrainian (ucraniano)  
+- Turkish (turco)  
+- Português (Brazil) (portugués (Brasil))  
 
 
 ## Características
@@ -281,11 +319,14 @@ Nuestra plataforma ofrece compatibilidad con una amplia gama de arquitecturas y 
 <details>
   <summary>Haz clic para ver los detalles de la configuración predeterminada</summary>
 
-### Nombre de Usuario & Contraseña & Ruta Base Web:
+### Nombre de usuario, Contraseña, Puerto y Ruta Base Web
 
-  Estos se generarán aleatoriamente si no los modificas.
+Si elige no modificar estas configuraciones, se generarán aleatoriamente (esto no se aplica a Docker).
 
-  - **Puerto:** el puerto predeterminado para el panel es `2053`
+**Configuraciones predeterminadas para Docker:**
+- **Nombre de usuario:** admin
+- **Contraseña:** admin
+- **Puerto:** 2053
 
 ### Gestión de la Base de Datos:
 
@@ -445,6 +486,7 @@ Ingresa el ID de chat de usuario en el campo de entrada número 4. Las cuentas d
 
 #### Uso
 
+- [Documentación de API](https://www.postman.com/hsanaei/3x-ui/collection/q1l5l0u/3x-ui)
 - `/login` con `POST` datos de usuario: `{username: '', password: ''}` para iniciar sesión
 - `/panel/api/inbounds` base para las siguientes acciones:
 
@@ -474,9 +516,7 @@ Ingresa el ID de chat de usuario en el campo de entrada número 4. Las cuentas d
 - `client.password` para TROJAN
 - `client.email` para Shadowsocks
 
-
-- [Documentación de API](https://documenter.getpostman.com/view/16802678/2s9YkgD5jm)
-- [<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://app.getpostman.com/run-collection/16802678-1a4c9270-ac77-40ed-959a-7aa56dc4a415?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D16802678-1a4c9270-ac77-40ed-959a-7aa56dc4a415%26entityType%3Dcollection%26workspaceId%3D2cd38c01-c851-4a15-a972-f181c23359d9)
+- [<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://app.getpostman.com/run-collection/5146551-dda3cab3-0e33-485f-96f9-d4262f437ac5?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D5146551-dda3cab3-0e33-485f-96f9-d4262f437ac5%26entityType%3Dcollection%26workspaceId%3Dd64f609f-485a-4951-9b8f-876b3f917124)
 </details>
 
 ## Variables de Entorno
@@ -504,13 +544,33 @@ XUI_BIN_FOLDER="bin" XUI_DB_FOLDER="/etc/x-ui" go build main.go
 
 ## Vista previa
 
-![1](./media/1.png)
-![2](./media/2.png)
-![3](./media/3.png)
-![4](./media/4.png)
-![5](./media/5.png)
-![6](./media/6.png)
-![7](./media/7.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./media/01-overview-dark.png">
+  <img alt="3x-ui" src="./media/01-overview-light.png">
+</picture>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./media/02-inbounds-dark.png">
+  <img alt="3x-ui" src="./media/02-inbounds-light.png">
+</picture>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./media/03-add-inbound-dark.png">
+  <img alt="3x-ui" src="./media/03-add-inbound-light.png">
+</picture>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./media/04-add-client-dark.png">
+  <img alt="3x-ui" src="./media/04-add-client-light.png">
+</picture>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./media/05-settings-dark.png">
+  <img alt="3x-ui" src="./media/05-settings-light.png">
+</picture>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./media/06-configs-dark.png">
+  <img alt="3x-ui" src="./media/06-configs-light.png">
+</picture>
+<picture>
+  <img alt="3x-ui" src="./media/7.png">
+</picture>
 
 ## Un agradecimiento especial a
 

@@ -22,9 +22,6 @@
             <a-select-option v-for="s in OutboundDomainStrategies" :value="s">[[ s ]]</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label='Timeout'>
-          <a-input-number v-model.number="outbound.settings.timeout" min="0" ></a-input-number>
-        </a-form-item>
         <a-form-item label='Redirect'>
           <a-input v-model="outbound.settings.redirect"></a-input>
         </a-form-item>
@@ -46,16 +43,39 @@
             <a-input v-model.trim="outbound.settings.fragment.interval"></a-input>
           </a-form-item>
         </template>
-        <a-form-item label='Noise'>
-          <a-switch :checked="Object.keys(outbound.settings.noise).length >0" @change="checked => outbound.settings.noise = checked ? new Outbound.FreedomSettings.Noise() : {}"></a-switch>
+
+        <!-- Switch for Noises -->
+        <a-form-item label='Noises'>
+          <a-switch :checked="outbound.settings.noises.length > 0"
+            @change="checked => outbound.settings.noises = checked ? [new Outbound.FreedomSettings.Noise()] : []">
+          </a-switch>
         </a-form-item>
-        <template v-if="Object.keys(outbound.settings.noise).length >0">
-          <a-form-item label='Packet'>
-            <a-input v-model.trim="outbound.settings.noise.packet"></a-input>
+
+        <!-- Add Noise Button -->
+        <template v-if="outbound.settings.noises.length > 0">
+          <a-form-item label="Noises">
+            <a-button icon="plus" type="primary" size="small" @click="outbound.settings.addNoise()"></a-button>
           </a-form-item>
-          <a-form-item label='Delay'>
-            <a-input v-model.trim="outbound.settings.noise.delay"></a-input>
-          </a-form-item>
+        
+        <!-- Noise Configurations -->
+          <a-form v-for="(noise, index) in outbound.settings.noises" :key="index" :colon="false" :label-col="{ md: {span:8} }"
+            :wrapper-col="{ md: {span:14} }">
+            <a-divider style="margin:0;"> Noise [[ index + 1 ]]
+              <a-icon v-if="outbound.settings.noises.length > 1" type="delete" @click="() => outbound.settings.delNoise(index)"
+                style="color: rgb(255, 77, 79); cursor: pointer;"></a-icon>
+            </a-divider>
+            <a-form-item label='Type'>
+              <a-select v-model="noise.type" :dropdown-class-name="themeSwitcher.currentTheme">
+                <a-select-option v-for="s in ['rand','base64','str']" :value="s">[[ s ]]</a-select-option>
+              </a-select>
+            </a-form-item>
+            <a-form-item label='Packet'>
+              <a-input v-model.trim="noise.packet"></a-input>
+            </a-form-item>
+            <a-form-item label='Delay'>
+              <a-input v-model.trim="noise.delay"></a-input>
+            </a-form-item>
+          </a-form>
         </template>
       </template>
 
@@ -74,6 +94,14 @@
           <a-select v-model="outbound.settings.network" :dropdown-class-name="themeSwitcher.currentTheme">
             <a-select-option v-for="s in ['udp','tcp']" :value="s">[[ s ]]</a-select-option>
           </a-select>
+        </a-form-item>
+        <a-form-item label='non-IP queries'>
+          <a-select v-model="outbound.settings.nonIPQuery" :dropdown-class-name="themeSwitcher.currentTheme">
+            <a-select-option v-for="s in ['drop','skip']" :value="s">[[ s ]]</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item v-if="outbound.settings.nonIPQuery === 'skip'" label='Block Types' >
+          <a-input v-model.number="outbound.settings.blockTypes"></a-input>
         </a-form-item>
       </template>
 
@@ -119,8 +147,8 @@
         <a-form-item label='Workers'>
           <a-input-number v-model.number="outbound.settings.workers" min="0"></a-input-number>
         </a-form-item>
-        <a-form-item label='Kernel Mode'>
-          <a-switch v-model="outbound.settings.kernelMode"></a-switch>
+        <a-form-item label='No Kernel Tun'>
+          <a-switch v-model="outbound.settings.noKernelTun"></a-switch>
         </a-form-item>
         <a-form-item>
           <template slot="label">
@@ -179,11 +207,15 @@
         <a-form-item label='ID'>
           <a-input v-model.trim="outbound.settings.id"></a-input>
         </a-form-item>
-        <a-form-item label='Security'>
-          <a-select v-model="outbound.settings.security" :dropdown-class-name="themeSwitcher.currentTheme">
-            <a-select-option v-for="key in USERS_SECURITY" :value="key">[[ key ]]</a-select-option>
-          </a-select>
-        </a-form-item>
+
+        <!-- vmess settings -->
+        <template v-if="outbound.protocol === Protocols.VMess">
+          <a-form-item label='Security'>
+            <a-select v-model="outbound.settings.security" :dropdown-class-name="themeSwitcher.currentTheme">
+              <a-select-option v-for="key in USERS_SECURITY" :value="key">[[ key ]]</a-select-option>
+            </a-select>
+          </a-form-item>
+        </template>
 
         <!-- vless settings -->
         <template v-if="outbound.canEnableTlsFlow()">
@@ -235,13 +267,13 @@
       <template v-if="outbound.canEnableStream()">
         <a-form-item label='{{ i18n "transmission" }}'>
           <a-select v-model="outbound.stream.network" @change="streamNetworkChange" :dropdown-class-name="themeSwitcher.currentTheme">
-            <a-select-option value="tcp">TCP</a-select-option>
+            <a-select-option value="tcp">TCP (RAW)</a-select-option>
             <a-select-option value="kcp">mKCP</a-select-option>
             <a-select-option value="ws">WebSocket</a-select-option>
-            <a-select-option value="http">H2</a-select-option>
+            <a-select-option value="http">HTTP</a-select-option>
             <a-select-option value="grpc">gRPC</a-select-option>
             <a-select-option value="httpupgrade">HTTPUpgrade</a-select-option>
-            <a-select-option value="splithttp">SplitHTTP</a-select-option>
+            <a-select-option value="splithttp">SplitHTTP (XHTTP)</a-select-option>
           </a-select>
         </a-form-item>
         <template v-if="outbound.stream.network === 'tcp'">
@@ -348,6 +380,11 @@
           <a-form-item label='{{ i18n "path" }}'>
             <a-input v-model.trim="outbound.stream.splithttp.path"></a-input>
           </a-form-item>
+          <a-form-item label='Mode'>
+            <a-select v-model="outbound.stream.splithttp.mode" :dropdown-class-name="themeSwitcher.currentTheme">
+              <a-select-option v-for="key in MODE_OPTION" :value="key">[[ key ]]</a-select-option>
+            </a-select>
+          </a-form-item>
         </template>
       </template>
 
@@ -420,8 +457,8 @@
         </a-form-item>
         <a-form-item label="Multipath TCP">
           <a-switch v-model.trim="outbound.stream.sockopt.tcpMptcp"></a-switch>
-      </a-form-item>
-        <a-form-item label="TCP No-Delay">
+        </a-form-item>
+        <a-form-item label="TCP No-Delay" v-if="outbound.stream.sockopt.tcpMptcp">
           <a-switch v-model="outbound.stream.sockopt.tcpNoDelay"></a-switch>
         </a-form-item>
       </template>
