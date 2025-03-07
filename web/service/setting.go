@@ -24,50 +24,52 @@ import (
 var xrayTemplateConfig string
 
 var defaultValueMap = map[string]string{
-	"xrayTemplateConfig": xrayTemplateConfig,
-	"webListen":          "",
-	"webDomain":          "",
-	"webPort":            "2053",
-	"webCertFile":        "",
-	"webKeyFile":         "",
-	"secret":             random.Seq(32),
-	"webBasePath":        "/",
-	"sessionMaxAge":      "60",
-	"pageSize":           "50",
-	"expireDiff":         "0",
-	"trafficDiff":        "0",
-	"remarkModel":        "-ieo",
-	"timeLocation":       "Local",
-	"tgBotEnable":        "false",
-	"tgBotToken":         "",
-	"tgBotProxy":         "",
-	"tgBotAPIServer":     "",
-	"tgBotChatId":        "",
-	"tgRunTime":          "@daily",
-	"tgBotBackup":        "false",
-	"tgBotLoginNotify":   "true",
-	"tgCpu":              "80",
-	"tgLang":             "en-US",
-	"secretEnable":       "false",
-	"subEnable":          "false",
-	"subListen":          "",
-	"subPort":            "2096",
-	"subPath":            "/sub/",
-	"subDomain":          "",
-	"subCertFile":        "",
-	"subKeyFile":         "",
-	"subUpdates":         "12",
-	"subEncrypt":         "true",
-	"subShowInfo":        "true",
-	"subURI":             "",
-	"subJsonPath":        "/json/",
-	"subJsonURI":         "",
-	"subJsonFragment":    "",
-	"subJsonNoises":      "",
-	"subJsonMux":         "",
-	"subJsonRules":       "",
-	"datepicker":         "gregorian",
-	"warp":               "",
+	"xrayTemplateConfig":          xrayTemplateConfig,
+	"webListen":                   "",
+	"webDomain":                   "",
+	"webPort":                     "2053",
+	"webCertFile":                 "",
+	"webKeyFile":                  "",
+	"secret":                      random.Seq(32),
+	"webBasePath":                 "/",
+	"sessionMaxAge":               "60",
+	"pageSize":                    "50",
+	"expireDiff":                  "0",
+	"trafficDiff":                 "0",
+	"remarkModel":                 "-ieo",
+	"timeLocation":                "Local",
+	"tgBotEnable":                 "false",
+	"tgBotToken":                  "",
+	"tgBotProxy":                  "",
+	"tgBotAPIServer":              "",
+	"tgBotChatId":                 "",
+	"tgRunTime":                   "@daily",
+	"tgBotBackup":                 "false",
+	"tgBotLoginNotify":            "true",
+	"tgCpu":                       "80",
+	"tgLang":                      "en-US",
+	"secretEnable":                "false",
+	"subEnable":                   "false",
+	"subListen":                   "",
+	"subPort":                     "2096",
+	"subPath":                     "/sub/",
+	"subDomain":                   "",
+	"subCertFile":                 "",
+	"subKeyFile":                  "",
+	"subUpdates":                  "12",
+	"subEncrypt":                  "true",
+	"subShowInfo":                 "true",
+	"subURI":                      "",
+	"subJsonPath":                 "/json/",
+	"subJsonURI":                  "",
+	"subJsonFragment":             "",
+	"subJsonNoises":               "",
+	"subJsonMux":                  "",
+	"subJsonRules":                "",
+	"datepicker":                  "gregorian",
+	"warp":                        "",
+	"externalTrafficInformEnable": "false",
+	"externalTrafficInformURI":    "",
 }
 
 type SettingService struct{}
@@ -494,6 +496,22 @@ func (s *SettingService) GetWarp() (string, error) {
 
 func (s *SettingService) SetWarp(data string) error {
 	return s.setString("warp", data)
+}
+
+func (s *SettingService) GetExternalTrafficInformEnable() (bool, error) {
+	return s.getBool("externalTrafficInformEnable")
+}
+
+func (s *SettingService) SetExternalTrafficInformEnable(value bool) error {
+	return s.setBool("externalTrafficInformEnable", value)
+}
+
+func (s *SettingService) GetExternalTrafficInformURI() (string, error) {
+	return s.getString("externalTrafficInformURI")
+}
+
+func (s *SettingService) SetExternalTrafficInformURI(InformURI string) error {
+	return s.setString("externalTrafficInformURI", InformURI)
 }
 
 func (s *SettingService) GetIpLimitEnable() (bool, error) {

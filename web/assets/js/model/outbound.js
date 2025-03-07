@@ -39,6 +39,7 @@ const UTLS_FINGERPRINT = {
     UTLS_QQ: "qq",
     UTLS_RANDOM: "random",
     UTLS_RANDOMIZED: "randomized",
+    UTLS_RONDOMIZEDNOALPN: "randomizednoalpn",
     UTLS_UNSAFE: "unsafe",
 };
 
@@ -85,6 +86,16 @@ const MODE_OPTION = {
     STREAM_ONE: "stream-one",
 };
 
+const Address_Port_Strategy = {
+    NONE: "none",
+    SrvPortOnly: "srvportonly",
+    SrvAddressOnly: "srvaddressonly",
+    SrvPortAndAddress: "srvportandaddress",
+    TxtPortOnly: "txtportonly",
+    TxtAddressOnly: "txtaddressonly",
+    TxtPortAndAddress: "txtportandaddress"
+};
+
 Object.freeze(Protocols);
 Object.freeze(SSMethods);
 Object.freeze(TLS_FLOW_CONTROL);
@@ -94,7 +105,7 @@ Object.freeze(OutboundDomainStrategies);
 Object.freeze(WireguardDomainStrategy);
 Object.freeze(USERS_SECURITY);
 Object.freeze(MODE_OPTION);
-
+Object.freeze(Address_Port_Strategy);
 
 class CommonClass {
 
@@ -411,7 +422,8 @@ class SockoptStreamSettings extends CommonClass {
         tcpFastOpen = false,
         tcpKeepAliveInterval = 0,
         tcpMptcp = false,
-        penetrate = false
+        penetrate = false,
+        addressPortStrategy = Address_Port_Strategy.NONE,
     ) {
         super();
         this.dialerProxy = dialerProxy;
@@ -419,6 +431,7 @@ class SockoptStreamSettings extends CommonClass {
         this.tcpKeepAliveInterval = tcpKeepAliveInterval;
         this.tcpMptcp = tcpMptcp;
         this.penetrate = penetrate;
+        this.addressPortStrategy = addressPortStrategy;
     }
 
     static fromJson(json = {}) {
@@ -429,6 +442,7 @@ class SockoptStreamSettings extends CommonClass {
             json.tcpKeepAliveInterval,
             json.tcpMptcp,
             json.penetrate,
+            json.addressPortStrategy
         );
     }
 
@@ -439,6 +453,7 @@ class SockoptStreamSettings extends CommonClass {
             tcpKeepAliveInterval: this.tcpKeepAliveInterval,
             tcpMptcp: this.tcpMptcp,
             penetrate: this.penetrate,
+            addressPortStrategy: this.addressPortStrategy
         };
     }
 }
