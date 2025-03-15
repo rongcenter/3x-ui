@@ -179,10 +179,10 @@
                       <template #control>
                         <a-select ref="selectLang"
                             v-model="lang"
-                            @change="setLang(lang)"
+                            @change="LanguageManager.setLanguage(lang)"
                             :dropdown-class-name="themeSwitcher.currentTheme"
                             style="width: 100%">
-                          <a-select-option :value="l.value" :label="l.value" v-for="l in supportLangs">
+                          <a-select-option :value="l.value" :label="l.value" v-for="l in LanguageManager.supportedLanguages">
                             <span role="img" :aria-label="l.name" v-text="l.icon"></span> &nbsp;&nbsp; <span v-text="l.name"></span>
                           </a-select-option>
                         </a-select>
@@ -271,7 +271,7 @@
                     <a-setting-list-item paddings="small">
                       <template #title>{{ i18n "pages.settings.currentPassword"}}</template>
                       <template #control>
-                        <password-input autocomplete="current-password" v-model="user.oldPassword"></password-input>
+                        <a-password-input autocomplete="current-password" v-model="user.oldPassword"></a-password-input>
                       </template>
                     </a-setting-list-item>
                     <a-setting-list-item paddings="small">
@@ -283,7 +283,7 @@
                     <a-setting-list-item paddings="small">
                       <template #title>{{ i18n "pages.settings.newPassword"}}</template>
                       <template #control>
-                        <password-input autocomplete="new-password" v-model="user.newPassword"></password-input>
+                        <a-password-input autocomplete="new-password" v-model="user.newPassword"></a-password-input>
                       </template>
                     </a-setting-list-item>
                     <a-list-item>
@@ -344,7 +344,7 @@
                       <template #title>{{ i18n "pages.settings.telegramBotLanguage"}}</template>
                       <template #control>
                         <a-select ref="selectBotLang" v-model="allSetting.tgLang" :dropdown-class-name="themeSwitcher.currentTheme" style="width: 100%">
-                          <a-select-option :value="l.value" :label="l.value" v-for="l in supportLangs">
+                          <a-select-option :value="l.value" :label="l.value" v-for="l in LanguageManager.supportedLanguages">
                             <span role="img" :aria-label="l.name" v-text="l.icon"></span> &nbsp;&nbsp; <span v-text="l.name"></span>
                           </a-select-option>
                         </a-select>
@@ -407,6 +407,13 @@
                       <template #description>{{ i18n "pages.settings.subEnableDesc"}}</template>
                       <template #control>
                         <a-switch v-model="allSetting.subEnable"></a-switch>
+                      </template>
+                    </a-setting-list-item>
+                    <a-setting-list-item paddings="small">
+                      <template #title>{{ i18n "pages.settings.subTitle"}}</template>
+                      <template #description>{{ i18n "pages.settings.subTitleDesc"}}</template>
+                      <template #control>
+                        <a-input type="text" v-model="allSetting.subTitle"></a-input>
                       </template>
                     </a-setting-list-item>
                     <a-setting-list-item paddings="small">
@@ -672,7 +679,7 @@
       allSetting: new AllSetting(),
       saveBtnDisable: true,
       user: {},
-      lang: getLang(),
+      lang: LanguageManager.getLanguage(),
       remarkModels: { i: 'Inbound', e: 'Email', o: 'Other' },
       remarkSeparators: [' ', '-', '_', '@', ':', '~', '|', ',', '.', '/'],
       datepickerList: [{ name: 'Gregorian (Standard)', value: 'gregorian' }, { name: 'Jalalian (شمسی)', value: 'jalalian' }],

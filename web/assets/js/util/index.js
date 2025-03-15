@@ -80,66 +80,68 @@ class PromiseUtil {
     }
 }
 
-const seq = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-
 class RandomUtil {
-    static randomIntRange(min, max) {
-        return Math.floor(Math.random() * (max - min) + min);
-    }
-
-    static randomInt(n) {
-        return this.randomIntRange(0, n);
-    }
-
-    static randomSeq(count) {
-        let str = '';
-        for (let i = 0; i < count; ++i) {
-            str += seq[this.randomInt(62)];
+    static getSeq({ type = "default", hasNumbers = true, hasLowercase = true, hasUppercase = true } = {}) {
+        let seq = '';
+        
+        switch (type) {
+            case "hex":
+                seq += "0123456789abcdef";
+                break;
+            default:
+                if (hasNumbers) seq += "0123456789";
+                if (hasLowercase) seq += "abcdefghijklmnopqrstuvwxyz";
+                if (hasUppercase) seq += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                break;
         }
-        return str;
+
+        return seq;
+    }
+
+    static randomInteger(min, max) {
+        const range = max - min + 1;
+        const randomBuffer = new Uint32Array(1);
+        window.crypto.getRandomValues(randomBuffer);
+        return Math.floor((randomBuffer[0] / (0xFFFFFFFF + 1)) * range) + min;
+    }
+
+    static randomSeq(count, options = {}) {
+        const seq = this.getSeq(options);
+        const seqLength = seq.length;
+        const randomValues = new Uint32Array(count);
+        window.crypto.getRandomValues(randomValues);
+        return Array.from(randomValues, v => seq[v % seqLength]).join('');
     }
 
     static randomShortIds() {
-        const lengths = [2, 4, 6, 8, 10, 12, 14, 16];
-        for (let i = lengths.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [lengths[i], lengths[j]] = [lengths[j], lengths[i]];
-        }
+        const lengths = [2, 4, 6, 8, 10, 12, 14, 16].sort(() => Math.random() - 0.5);
 
-        let shortIds = [];
-        for (let length of lengths) {
-            let shortId = '';
-            for (let i = 0; i < length; i++) {
-                shortId += seq[this.randomInt(16)];
-            }
-            shortIds.push(shortId);
-        }
-        return shortIds.join(',');
+        return lengths.map(len => this.randomSeq(len, { type: "hex" })).join(',');
     }
 
     static randomLowerAndNum(len) {
-        let str = '';
-        for (let i = 0; i < len; ++i) {
-            str += seq[this.randomInt(36)];
-        }
-        return str;
+        return this.randomSeq(len, { hasUppercase: false });
     }
 
     static randomUUID() {
-        const template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-        return template.replace(/[xy]/g, function (c) {
-            const randomValues = new Uint8Array(1);
-            crypto.getRandomValues(randomValues);
-            let randomValue = randomValues[0] % 16;
-            let calculatedValue = (c === 'x') ? randomValue : (randomValue & 0x3 | 0x8);
-            return calculatedValue.toString(16);
-        });
+        if (window.location.protocol === "https:") {
+            return window.crypto.randomUUID();
+        } else {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+                .replace(/[xy]/g, function (c) {
+                    const randomValues = new Uint8Array(1);
+                    window.crypto.getRandomValues(randomValues);
+                    let randomValue = randomValues[0] % 16;
+                    let calculatedValue = (c === 'x') ? randomValue : (randomValue & 0x3 | 0x8);
+                    return calculatedValue.toString(16);
+                });
+        }
     }
 
     static randomShadowsocksPassword() {
-        let array = new Uint8Array(32);
+        const array = new Uint8Array(32);
         window.crypto.getRandomValues(array);
-        return btoa(String.fromCharCode.apply(null, array));
+        return Base64.encode(String.fromCharCode(...array));
     }
 }
 
@@ -515,17 +517,22 @@ class ClipboardManager {
 class Base64 {
     static encode(content = "", safe = false) {
         if (safe) {
-            return window.btoa(content)
+            return Base64.encode(content)
                 .replace(/\+/g, '-')
                 .replace(/=/g, '')
                 .replace(/\//g, '_')
         }
 
-        return window.btoa(content)
+        return window.btoa(
+            String.fromCharCode(...new TextEncoder().encode(content))
+        )
     }
 
     static decode(content = "") {
-        return window.atob(content)
+        return new TextDecoder()
+            .decode(
+                Uint8Array.from(window.atob(content), c => c.charCodeAt(0))
+            )
     }
 }
 
@@ -669,4 +676,108 @@ class URLBuilder {
         
         return `${protocol}//${host}${port}${base}${path}`;
     }
+}
+
+class LanguageManager {
+    static supportedLanguages = [
+        {
+            name: "English",
+            value: "en-US",
+            icon: "🇺🇸",
+        },
+        {
+            name: "فارسی",
+            value: "fa-IR",
+            icon: "🇮🇷",
+        },
+        {
+            name: "简体中文",
+            value: "zh-CN",
+            icon: "🇨🇳",
+        },
+        {
+            name: "繁體中文",
+            value: "zh-TW",
+            icon: "🇹🇼",
+        },
+        {
+            name: "日本語",
+            value: "ja-JP",
+            icon: "🇯🇵",
+        },
+        {
+            name: "Русский",
+            value: "ru-RU",
+            icon: "🇷🇺",
+        },
+        {
+            name: "Tiếng Việt",
+            value: "vi-VN",
+            icon: "🇻🇳",
+        },
+        {
+            name: "Español",
+            value: "es-ES",
+            icon: "🇪🇸",
+        },
+        {
+            name: "Indonesian",
+            value: "id-ID",
+            icon: "🇮🇩",
+        },
+        {
+            name: "Український",
+            value: "uk-UA",
+            icon: "🇺🇦",
+        },
+        {
+            name: "Türkçe",
+            value: "tr-TR",
+            icon: "🇹🇷",
+        },
+        {
+            name: "Português",
+            value: "pt-BR",
+            icon: "🇧🇷",
+        }
+    ]
+
+    static getLanguage() {
+        let lang = CookieManager.getCookie("lang");
+    
+        if (!lang) {
+            if (window.navigator) {
+                lang = window.navigator.language || window.navigator.userLanguage;
+    
+                if (LanguageManager.isSupportLanguage(lang)) {
+                    CookieManager.setCookie("lang", lang, 150);
+                } else {
+                    CookieManager.setCookie("lang", "en-US", 150);
+                    window.location.reload();
+                }
+            } else {
+                CookieManager.setCookie("lang", "en-US", 150);
+                window.location.reload();
+            }
+        }
+    
+        return lang;
+    }
+    
+    static setLanguage(language) {
+        if (!LanguageManager.isSupportLanguage(language)) {
+            language = "en-US";
+        }
+    
+        CookieManager.setCookie("lang", language, 150);
+        window.location.reload();
+    }
+    
+    static isSupportLanguage(language) {
+        const languageFilter = LanguageManager.supportedLanguages.filter((lang) => {
+            return lang.value === language
+        })
+    
+        return languageFilter.length > 0;
+    }    
 }

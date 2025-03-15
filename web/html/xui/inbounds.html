@@ -662,6 +662,7 @@
             refreshInterval: Number(localStorage.getItem("refreshInterval")) || 5000,
             subSettings: {
                 enable : false,
+                subTitle : '',
                 subURI : '',
                 subJsonURI : '',
             },
@@ -711,6 +712,7 @@
                     this.tgBotEnable = tgBotEnable;
                     this.subSettings = {
                         enable : subEnable,
+                        subTitle : subTitle,
                         subURI: subURI,
                         subJsonURI: subJsonURI
                     };
@@ -927,7 +929,7 @@
                     expiryTime: dbInbound.expiryTime,
 
                     listen: '',
-                    port: RandomUtil.randomIntRange(10000, 60000),
+                    port: RandomUtil.randomInteger(10000, 60000),
                     protocol: baseInbound.protocol,
                     settings: Inbound.Settings.getSettings(baseInbound.protocol).toString(),
                     streamSettings: baseInbound.stream.toString(),

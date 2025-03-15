@@ -348,7 +348,7 @@
                         :indent-size="0" 
                         v-on:onSort="replaceRule">
                     <template slot="action" slot-scope="text, rule, index">
-                        <table-sort-trigger :item-index="index"></table-sort-trigger>
+                        <a-table-sort-trigger :item-index="index"></a-table-sort-trigger>
                         <span class="ant-table-row-index"> [[ index+1 ]] </span>
                         <a-dropdown :trigger="['click']">
                         <a-icon @click="e => e.preventDefault()" type="more" style="font-size: 16px; text-decoration: bold;"></a-icon>
@@ -806,16 +806,16 @@
             { title: 'Port', dataIndex: 'sourcePort', align: 'center', width: 10, ellipsis: true } ]},
         { title: '{{ i18n "pages.inbounds.network"}}', children: [
             { title: 'L4', dataIndex: 'network', align: 'center', width: 10 },
-            { title: 'Protocol', dataIndex: 'protocol', align: 'center', width: 10, ellipsis: true },
-            { title: 'Attrs', dataIndex: 'attrs', align: 'center', width: 20, ellipsis: true } ]}, 
+            { title: 'Protocol', dataIndex: 'protocol', align: 'center', width: 15, ellipsis: true },
+            { title: 'Attrs', dataIndex: 'attrs', align: 'center', width: 10, ellipsis: true } ]}, 
         { title: '{{ i18n "pages.xray.rules.dest"}}', children: [
             { title: 'IP', dataIndex: 'ip', align: 'center', width: 20, ellipsis: true },
             { title: 'Domain', dataIndex: 'domain', align: 'center', width: 20, ellipsis: true },
             { title: 'Port', dataIndex: 'port', align: 'center', width: 10, ellipsis: true }]},
         { title: '{{ i18n "pages.xray.rules.inbound"}}', children: [
-            { title: 'Inbound Tag', dataIndex: 'inboundTag', align: 'center', width: 15, ellipsis: true },
+            { title: 'Tag', dataIndex: 'inboundTag', align: 'center', width: 15, ellipsis: true },
             { title: 'Client Email', dataIndex: 'user', align: 'center', width: 20, ellipsis: true }]},
-        { title: '{{ i18n "pages.xray.rules.outbound"}}', dataIndex: 'outboundTag', align: 'center', width: 15 },
+        { title: '{{ i18n "pages.xray.rules.outbound"}}', dataIndex: 'outboundTag', align: 'center', width: 17 },
         { title: '{{ i18n "pages.xray.rules.balancer"}}', dataIndex: 'balancerTag', align: 'center', width: 15 },
     ];
 
