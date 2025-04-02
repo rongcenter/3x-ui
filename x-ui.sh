@@ -33,84 +33,23 @@ else
     echo "Failed to check the system OS, please contact the author!" >&2
     exit 1
 fi
-
 echo "The OS release is: $release"
+
+check_glibc_version() {
+    glibc_version=$(ldd --version | head -n1 | awk '{print $NF}')
+    
+    required_version="2.32"
+    if [[ "$(printf '%s\n' "$required_version" "$glibc_version" | sort -V | head -n1)" != "$required_version" ]]; then
+        echo -e "${red}GLIBC version $glibc_version is too old! Required: 2.32 or higher${plain}"
+        echo "Please upgrade to a newer version of your operating system to get a higher GLIBC version."
+        exit 1
+    fi
+    echo "GLIBC version: $glibc_version (meets requirement of 2.32+)"
+}
+check_glibc_version
 
 os_version=""
 os_version=$(grep "^VERSION_ID" /etc/os-release | cut -d '=' -f2 | tr -d '"' | tr -d '.')
-
-if [[ "${release}" == "arch" ]]; then
-    echo "Your OS is Arch Linux"
-elif [[ "${release}" == "parch" ]]; then
-    echo "Your OS is Parch Linux"
-elif [[ "${release}" == "manjaro" ]]; then
-    echo "Your OS is Manjaro"
-elif [[ "${release}" == "armbian" ]]; then
-    echo "Your OS is Armbian"
-elif [[ "${release}" == "alpine" ]]; then
-    echo "Your OS is Alpine Linux"
-elif [[ "${release}" == "opensuse-tumbleweed" ]]; then
-    echo "Your OS is OpenSUSE Tumbleweed"
-elif [[ "${release}" == "openEuler" ]]; then
-    if [[ ${os_version} -lt 2203 ]]; then
-        echo -e "${red} Please use OpenEuler 22.03 or higher ${plain}\n" && exit 1
-    fi
-elif [[ "${release}" == "centos" ]]; then
-    if [[ ${os_version} -lt 8 ]]; then
-        echo -e "${red} Please use CentOS 8 or higher ${plain}\n" && exit 1
-    fi
-elif [[ "${release}" == "ubuntu" ]]; then
-    if [[ ${os_version} -lt 2204 ]]; then
-        echo -e "${red} Please use Ubuntu 22 or higher version!${plain}\n" && exit 1
-    fi
-elif [[ "${release}" == "fedora" ]]; then
-    if [[ ${os_version} -lt 36 ]]; then
-        echo -e "${red} Please use Fedora 36 or higher version!${plain}\n" && exit 1
-    fi
-elif [[ "${release}" == "amzn" ]]; then
-    if [[ ${os_version} != "2023" ]]; then
-        echo -e "${red} Please use Amazon Linux 2023!${plain}\n" && exit 1
-    fi
-elif [[ "${release}" == "debian" ]]; then
-    if [[ ${os_version} -lt 11 ]]; then
-        echo -e "${red} Please use Debian 11 or higher ${plain}\n" && exit 1
-    fi
-elif [[ "${release}" == "almalinux" ]]; then
-    if [[ ${os_version} -lt 80 ]]; then
-        echo -e "${red} Please use AlmaLinux 8.0 or higher ${plain}\n" && exit 1
-    fi
-elif [[ "${release}" == "rocky" ]]; then
-    if [[ ${os_version} -lt 8 ]]; then
-        echo -e "${red} Please use Rocky Linux 8 or higher ${plain}\n" && exit 1
-    fi
-elif [[ "${release}" == "ol" ]]; then
-    if [[ ${os_version} -lt 8 ]]; then
-        echo -e "${red} Please use Oracle Linux 8 or higher ${plain}\n" && exit 1
-    fi
-elif [[ "${release}" == "virtuozzo" ]]; then
-    if [[ ${os_version} -lt 8 ]]; then
-        echo -e "${red} Please use Virtuozzo Linux 8 or higher ${plain}\n" && exit 1
-    fi
-else
-    echo -e "${red}Your operating system is not supported by this script.${plain}\n"
-    echo "Please ensure you are using one of the following supported operating systems:"
-    echo "- Ubuntu 22.04+"
-    echo "- Debian 11+"
-    echo "- CentOS 8+"
-    echo "- OpenEuler 22.03+"
-    echo "- Fedora 36+"
-    echo "- Arch Linux"
-    echo "- Parch Linux"
-    echo "- Manjaro"
-    echo "- Armbian"
-    echo "- AlmaLinux 8.0+"
-    echo "- Rocky Linux 8+"
-    echo "- Oracle Linux 8+"
-    echo "- OpenSUSE Tumbleweed"
-    echo "- Amazon Linux 2023"
-    echo "- Virtuozzo Linux 8+"
-    exit 1
-fi
 
 # Declare Variables
 log_folder="${XUI_LOG_FOLDER:=/var/log}"
@@ -1127,7 +1066,7 @@ ssl_cert_issue() {
 
     # issue the certificate
     ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
-    ~/.acme.sh/acme.sh --issue -d ${domain} --listen-v6 --standalone --httpport ${WebPort}
+    ~/.acme.sh/acme.sh --issue -d ${domain} --listen-v6 --standalone --httpport ${WebPort} --force
     if [ $? -ne 0 ]; then
         LOGE "Issuing certificate failed, please check logs."
         rm -rf ~/.acme.sh/${domain}
@@ -1136,10 +1075,36 @@ ssl_cert_issue() {
         LOGE "Issuing certificate succeeded, installing certificates..."
     fi
 
+    reloadCmd="x-ui restart"
+
+    LOGI "Default --reloadcmd for ACME is: ${yellow}x-ui restart"
+    LOGI "This command will run on every certificate issue and renew."
+    read -p "Would you like to modify --reloadcmd for ACME? (y/n): " setReloadcmd
+    if [[ "$setReloadcmd" == "y" || "$setReloadcmd" == "Y" ]]; then
+        echo -e "\n${green}\t1.${plain} Preset: systemctl reload nginx ; x-ui restart"
+        echo -e "${green}\t2.${plain} Input your own command"
+        echo -e "${green}\t0.${plain} Keep default reloadcmd"
+        read -p "Choose an option: " choice
+        case "$choice" in
+        1)
+            LOGI "Reloadcmd is: systemctl reload nginx ; x-ui restart"
+            reloadCmd="systemctl reload nginx ; x-ui restart"
+            ;;
+        2)  
+            LOGD "It's recommended to put x-ui restart at the end, so it won't raise an error if other services fails"
+            read -p "Please enter your reloadcmd (example: systemctl reload nginx ; x-ui restart): " reloadCmd
+            LOGI "Your reloadcmd is: ${reloadCmd}"
+            ;;
+        *)
+            LOGI "Keep default reloadcmd"
+            ;;
+        esac
+    fi
+
     # install the certificate
     ~/.acme.sh/acme.sh --installcert -d ${domain} \
         --key-file /root/cert/${domain}/privkey.pem \
-        --fullchain-file /root/cert/${domain}/fullchain.pem
+        --fullchain-file /root/cert/${domain}/fullchain.pem --reloadcmd "${reloadCmd}"
 
     if [ $? -ne 0 ]; then
         LOGE "Installing certificate failed, exiting."
@@ -1208,13 +1173,6 @@ ssl_cert_issue_CF() {
         fi
 
         CF_Domain=""
-        certPath="/root/cert-CF"
-        if [ ! -d "$certPath" ]; then
-            mkdir -p $certPath
-        else
-            rm -rf $certPath
-            mkdir -p $certPath
-        fi
 
         LOGD "Please set a domain name:"
         read -p "Input your domain here: " CF_Domain
@@ -1242,7 +1200,7 @@ ssl_cert_issue_CF() {
         export CF_Email="${CF_AccountEmail}"
 
         # Issue the certificate using Cloudflare DNS
-        ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log
+        ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} --log --force
         if [ $? -ne 0 ]; then
             LOGE "Certificate issuance failed, script exiting..."
             exit 1
@@ -1250,17 +1208,47 @@ ssl_cert_issue_CF() {
             LOGI "Certificate issued successfully, Installing..."
         fi
 
-        # Install the certificate
-        mkdir -p ${certPath}/${CF_Domain}
+         # Install the certificate
+        certPath="/root/cert/${CF_Domain}"
+        if [ -d "$certPath" ]; then
+            rm -rf ${certPath}
+        fi
+
+        mkdir -p ${certPath}
         if [ $? -ne 0 ]; then
-            LOGE "Failed to create directory: ${certPath}/${CF_Domain}"
+            LOGE "Failed to create directory: ${certPath}"
             exit 1
         fi
 
-        ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} \
-            --fullchain-file ${certPath}/${CF_Domain}/fullchain.pem \
-            --key-file ${certPath}/${CF_Domain}/privkey.pem
+        reloadCmd="x-ui restart"
 
+        LOGI "Default --reloadcmd for ACME is: ${yellow}x-ui restart"
+        LOGI "This command will run on every certificate issue and renew."
+        read -p "Would you like to modify --reloadcmd for ACME? (y/n): " setReloadcmd
+        if [[ "$setReloadcmd" == "y" || "$setReloadcmd" == "Y" ]]; then
+            echo -e "\n${green}\t1.${plain} Preset: systemctl reload nginx ; x-ui restart"
+            echo -e "${green}\t2.${plain} Input your own command"
+            echo -e "${green}\t0.${plain} Keep default reloadcmd"
+            read -p "Choose an option: " choice
+            case "$choice" in
+            1)
+                LOGI "Reloadcmd is: systemctl reload nginx ; x-ui restart"
+                reloadCmd="systemctl reload nginx ; x-ui restart"
+                ;;
+            2)  
+                LOGD "It's recommended to put x-ui restart at the end, so it won't raise an error if other services fails"
+                read -p "Please enter your reloadcmd (example: systemctl reload nginx ; x-ui restart): " reloadCmd
+                LOGI "Your reloadcmd is: ${reloadCmd}"
+                ;;
+            *)
+                LOGI "Keep default reloadcmd"
+                ;;
+            esac
+        fi
+        ~/.acme.sh/acme.sh --installcert -d ${CF_Domain} -d *.${CF_Domain} \
+            --key-file ${certPath}/privkey.pem \
+            --fullchain-file ${certPath}/fullchain.pem --reloadcmd "${reloadCmd}"
+        
         if [ $? -ne 0 ]; then
             LOGE "Certificate installation failed, script exiting..."
             exit 1
@@ -1275,15 +1263,15 @@ ssl_cert_issue_CF() {
             exit 1
         else
             LOGI "The certificate is installed and auto-renewal is turned on. Specific information is as follows:"
-            ls -lah ${certPath}/${CF_Domain}
-            chmod 755 ${certPath}/${CF_Domain}
+            ls -lah ${certPath}/*
+            chmod 755 ${certPath}/*
         fi
 
         # Prompt user to set panel paths after successful certificate installation
         read -p "Would you like to set this certificate for the panel? (y/n): " setPanel
         if [[ "$setPanel" == "y" || "$setPanel" == "Y" ]]; then
-            local webCertFile="${certPath}/${CF_Domain}/fullchain.pem"
-            local webKeyFile="${certPath}/${CF_Domain}/privkey.pem"
+            local webCertFile="${certPath}/fullchain.pem"
+            local webKeyFile="${certPath}/privkey.pem"
 
             if [[ -f "$webCertFile" && -f "$webKeyFile" ]]; then
                 /usr/local/x-ui/x-ui cert -webCert "$webCertFile" -webCertKey "$webKeyFile"
@@ -1585,7 +1573,6 @@ install_iplimit() {
     # Launching fail2ban
     if ! systemctl is-active --quiet fail2ban; then
         systemctl start fail2ban
-        systemctl enable fail2ban
     else
         systemctl restart fail2ban
     fi
